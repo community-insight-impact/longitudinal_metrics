@@ -13,7 +13,7 @@ import re
 
 pd.set_option('display.max_columns', 100)
 
-#os.chdir("/Users/admin/Documents/cvi")
+os.chdir("/Users/admin/Documents/cvi/severity-data")
 
 ####################################
 # SET-UP
@@ -21,7 +21,7 @@ pd.set_option('display.max_columns', 100)
 
 # Load helper datasets and define helper functions
 
-crosswalk = pd.read_csv("severity-data/county_crosswalk.csv", dtype = str)
+crosswalk = pd.read_csv("county_crosswalk.csv", dtype = str)
 crosswalk.rename(columns = {"Name":"County"}, inplace = True)
 
 def get_years_in_range(yr_range):
@@ -62,7 +62,7 @@ def append_files(file_path, variable):
 ####################################
 
 # ---------------------- percent of residents aged 65+
-ccest2019 = pd.read_csv("severity-data/cc-est2019-alldata.csv", encoding = "ISO-8859-1", sep = ",")
+ccest2019 = pd.read_csv("cc-est2019-alldata.csv", encoding = "ISO-8859-1", sep = ",")
 
 # data cleaning
 ccest2019["FIPS"] = ccest2019.STATE.astype(str).apply(lambda x: "0" + x if len(x) < 2 else x) + \
@@ -90,7 +90,7 @@ over65 = over65.loc[over65["YEAR"] > 2, ["FIPS", "year", "percent_65plus"]]
 
 
 # ---------------------- total cardiovascular disease death rate **
-heart_disease_mortality = pd.read_csv("severity-data/total_heart_diease_data.csv")
+heart_disease_mortality = pd.read_csv("total_heart_diease_data.csv")
 
 # get the unique list of year ranges
 year_ranges = heart_disease_mortality["Year"].unique().tolist()
@@ -104,8 +104,9 @@ heart_disease_mortality.rename(columns = {"Value": "total_heart_disease_death_ra
 heart_disease_mortality.FIPS = heart_disease_mortality.FIPS.astype(str).apply(edit_fips)
 heart_disease_mortality["year"] = heart_disease_mortality["year"].astype(str)
 
+
 # ---------------------- hypertension death rate **
-hypertension_mortality = pd.read_csv("severity-data/hypertension_historical_data.csv")
+hypertension_mortality = pd.read_csv("hypertension_historical_data.csv")
 
 # get the unique list of year ranges
 year_ranges = hypertension_mortality["Year"].unique().tolist()
@@ -119,8 +120,9 @@ hypertension_mortality.rename(columns = {"Value": "hypertension_death_rate" }, i
 hypertension_mortality.FIPS = hypertension_mortality.FIPS.astype(str).apply(edit_fips)
 hypertension_mortality["year"] = hypertension_mortality["year"].astype(str)
 
+
 # ---------------------- COPD death rate **
-copd_mortality = pd.read_excel("severity-data/IHME_USA_COUNTY_RESP_DISEASE_MORTALITY_1980_2014_NATIONAL_Y2017M09D26.xlsx", \
+copd_mortality = pd.read_excel("IHME_USA_COUNTY_RESP_DISEASE_MORTALITY_1980_2014_NATIONAL_Y2017M09D26.xlsx", \
                      sheet_name = 1, header = 1)
 helper_dict = {"2006":"2005", "2007":"2005", "2008":"2005", "2009":"2005", \
               "2011":"2010", "2012":"2010", "2013":"2010", \
@@ -152,11 +154,11 @@ del missing_year, temp_df
 # ---------------------- percent of residents who are smokers
 smokers = pd.DataFrame()
 
-for file in os.listdir("severity-data/county-health-rankings"):
-    tempDF = pd.read_csv("severity-data/county-health-rankings" + "/"  + file, skiprows=([1]))
+for file in os.listdir("county-health-rankings"):
+    tempDF = pd.read_csv(os.getcwd() + "/county-health-rankings/"  + file, skiprows=([1]))
     tempDF = tempDF.loc[tempDF["Adult smoking raw value"].isnull() == False,
                         ["5-digit FIPS Code", "Adult smoking raw value"]]
-    tempDF["year"] = re.findall("\d+", file)[0]
+    tempDF["year"] = re.findall("\d{4}", file)[0]
     tempDF.rename(columns = {"5-digit FIPS Code": "FIPS", "Adult smoking raw value":"percent_smokers"}, inplace = True)
     smokers = smokers.append(tempDF, ignore_index = True)    
 del tempDF, file
@@ -165,13 +167,13 @@ smokers["FIPS"] = smokers.FIPS.astype(str).apply(lambda x: edit_fips(x.split("."
 smokers["percent_smokers"] = 100 * smokers["percent_smokers"] 
 
 # ---------------------- percent of residents diagnosed with diabetes
-diabetes = append_files(file_path = "severity-data/diabetes", variable = "pct_diabetes")
-diabetes = diabetes[["FIPS", "pct_diabetes", "year"]]
+diabetes = append_files(file_path = "diabetes", variable = "percent_diabetes")
+diabetes = diabetes[["FIPS", "percent_diabetes", "year"]]
 
 # ---------------------- percent of residents diagnosed with obesity
 
-obesity = append_files(file_path = "severity-data/obesity", variable = "pct_obese")
-obesity = obesity[["FIPS", "pct_obese", "year"]]
+obesity = append_files(file_path = "obesity", variable = "percentt_obese")
+obesity = obesity[["FIPS", "percent_obese", "year"]]
 
 ####################################
 # MERGE DATA
@@ -187,4 +189,4 @@ for dataset in [smokers, diabetes, obesity, copd_mortality_grpd, hypertension_mo
 # EXPORT LONGITUDINAL SEVERITY METRIC
 ####################################
 
-severity_historical.to_csv("severity-data/severity_historical.csv", index = False)
+severity_historical.to_csv("severity_historical.csv", index = False)

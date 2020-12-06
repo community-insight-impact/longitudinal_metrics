@@ -175,6 +175,7 @@ diabetes = diabetes[["FIPS", "percent_diabetes", "year"]]
 obesity = append_files(file_path = "obesity", variable = "percentt_obese")
 obesity = obesity[["FIPS", "percent_obese", "year"]]
 
+
 ####################################
 # MERGE DATA
 ####################################
@@ -183,6 +184,24 @@ obesity = obesity[["FIPS", "percent_obese", "year"]]
 severity_historical = over65
 for dataset in [smokers, diabetes, obesity, copd_mortality_grpd, hypertension_mortality, heart_disease_mortality]:
     severity_historical = severity_historical.merge(dataset, how = "left", on = ["year", "FIPS"])
+
+severity_historical["percent_diabetes"] = pd.to_numeric(severity_historical["percent_diabetes"], errors = "coerce")
+severity_historical["percent_obese"] = pd.to_numeric(severity_historical["percent_obese"], errors = "coerce")
+
+# create severity score
+d = severity_historical.copy()
+for column in severity_historical.drop(columns = ["FIPS", "year"]).columns.tolist():
+        d["q_"+ column] = d[column].rank(pct=True)
+
+severity_historical['severe_cases']=( ( 4 * d['q_percent_65plus'] + \
+        4 * d['q_percent_diabetes'] + \
+        4 * d['q_percent_obese'] + \
+        4 * d['q_total_heart_disease_death_rate'] + \
+        4 * d['q_hypertension_death_rate'] + \
+        3 * d['q_copd_death_rate'] + \
+        d['q_percent_smokers']) / 25 ) * 100
+del d
+severity_historical = severity_historical.loc[severity_historical.severe_cases.isnull() == False]
 
 
 ####################################

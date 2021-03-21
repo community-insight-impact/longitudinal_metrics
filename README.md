@@ -1,5 +1,14 @@
 # CVI Longitudinal Analysis 🕑
 
+The report for this project can be found in [this presentation](https://docs.google.com/presentation/d/e/2PACX-1vSBMJQ1k_AHi52Qp4vVT6srPFXUkQVZb6CEuzIXH7bQ_81QUsPzlHKycyzsUvbS3umj1DCEoSS-3XkP/pub?start=false&loop=false&delayms=60000)!
+
+## Quick File Directory
+1. Dataset creation: [severity_historical_clean_merge.py](https://github.com/community-insight-impact/longitudinal_metrics/blob/main/severity_historical_clean_merge.py)
+2. PPS and correlation matricies: [app.py](https://github.com/community-insight-impact/longitudinal_metrics/blob/main/app.py)
+3. ANOVA testing: [ANOVA-Testing.ipynb.zip](https://github.com/community-insight-impact/longitudinal_metrics/blob/main/Anova-Testing.ipynb.zip)
+4. Percent change investigation: [County-Level Exploration-Severity Metric-Updated.ipynb.zip](https://github.com/community-insight-impact/longitudinal_metrics/blob/main/County-Level%20Exploration%20-%20Severity%20Metric%20-Updated.ipynb.zip)
+5. Time series clustering: [time-series-clustering.py](https://github.com/community-insight-impact/longitudinal_metrics/blob/main/time-series-clustering.py)
+
 ## Introduction
 To measure the validity of the [three core CVI metrics](https://github.com/community-insight-impact/covid_community_vulnerability), we undertook a study of the metrics across time. Our motivation for this analysis was to discover how the metrics and their composite variables changed year-over-year. This reppository covers the analysis we completed for the severity metric. We started with the severity metric because it has the longest timespan of complete data.
 
@@ -8,7 +17,7 @@ We restricted the severity data to 2010-2017 to ensure no variables were missing
 ## Exploratory Analyses
 We began the analysis by reviewing within- and across-severity score changes across time. We analyzed within-variable variation using one-way and non-parametric ANOVA tests.  We were also interested in the changes in relationships between variables, and modeled those relationships using correlation and predictive power matrices. We then reviewed year-over-year percent change in the severity score to assess its validity over time. For county-year observations with percent changes falling below the 10th or above the 90th percentile, we plan to conduct further research on whether public policy changes can explain the extreme change. 
 
-The files *Severity Metric Exploratory Analysis.ipynb* contains our ANOVA testing, and you can find the percent change analyses in the *County-Level Exploration - Severity Metric -Updated.ipynb* file. 
+The files *ANOVA-Testing.ipynb.zip* contains our ANOVA testing, and you can find the percent change analyses in the *County-Level Exploration - Severity Metric -Updated.ipynb* file. 
 
 ![Longitudinal PPS Matrix](https://github.com/community-insight-impact/longitudinal_metrics/blob/main/pps.png)
 
